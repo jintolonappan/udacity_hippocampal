@@ -44,7 +44,7 @@ class UNetExperiment:
         os.makedirs(self.out_dir, exist_ok=True)
 
         # Create data loaders
-        # TASK: SlicesDataset class is not complete. Go to the file and complete it. 
+        # DONE: SlicesDataset class is not complete. Go to the file and complete it. 
         # Note that we are using a 2D version of UNet here, which means that it will expect
         # batches of 2D slices.
         self.train_loader = DataLoader(SlicesDataset(dataset[split["train"]]),
@@ -93,12 +93,12 @@ class UNetExperiment:
         for i, batch in enumerate(self.train_loader):
             self.optimizer.zero_grad()
 
-            # TASK: You have your data in batch variable. Put the slices as 4D Torch Tensors of 
+            # DONE: You have your data in batch variable. Put the slices as 4D Torch Tensors of 
             # shape [BATCH_SIZE, 1, PATCH_SIZE, PATCH_SIZE] into variables data and target. 
             # Feed data to the model and feed target to the loss function
             # 
-            # data = <YOUR CODE HERE>
-            # target = <YOUR CODE HERE>
+            data = batch['image']
+            target = batch['seg']
 
             prediction = self.model(data)
 
@@ -152,8 +152,14 @@ class UNetExperiment:
         with torch.no_grad():
             for i, batch in enumerate(self.val_loader):
                 
-                # TASK: Write validation code that will compute loss on a validation sample
-                # <YOUR CODE HERE>
+                # DONE: Write validation code that will compute loss on a validation sample
+                data = batch['image']
+                target = batch['seg']
+
+                prediction = self.model(data)
+                prediction_softmax = F.softmax(prediction, dim=1)
+
+                loss = self.loss_function(prediction, target[:, 0, :, :])
 
                 print(f"Batch {i}. Data shape {data.shape} Loss {loss}")
 
@@ -210,7 +216,7 @@ class UNetExperiment:
         # on full 3D volumes, much like we will be doing it when we deploy the model in the 
         # clinical environment. 
 
-        # TASK: Inference Agent is not complete. Go and finish it. Feel free to test the class
+        # DONE: Inference Agent is not complete. Go and finish it. Feel free to test the class
         # in a module of your own by running it against one of the data samples
         inference_agent = UNetInferenceAgent(model=self.model, device=self.device)
 
@@ -226,7 +232,7 @@ class UNetExperiment:
             # We compute and report Dice and Jaccard similarity coefficients which 
             # assess how close our volumes are to each other
 
-            # TASK: Dice3D and Jaccard3D functions are not implemented. 
+            # DONE: Dice3D and Jaccard3D functions are not implemented. 
             #  Complete the implementation as we discussed
             # in one of the course lessons, you can look up definition of Jaccard index 
             # on Wikipedia. If you completed it
