@@ -37,7 +37,7 @@ class SlicesDataset(Dataset):
         # in memory entirely
         # Also this would be the place to call transforms if data augmentation is used
         
-        # TASK: Create two new keys in the "sample" dictionary, named "image" and "seg"
+        # DONE: Create two new keys in the "sample" dictionary, named "image" and "seg"
         # The values are 3D Torch Tensors with image and label data respectively. 
         # First dimension is size 1, and last two hold the voxel data from the respective
         # slices. Write code that stores the 2D slice data in the last 2 dimensions of the 3D Tensors. 
@@ -47,7 +47,10 @@ class SlicesDataset(Dataset):
         # and the slice number are in the slc variable. 
         # Hint2: You can use None notation like so: arr[None, :] to add size-1 
         # dimension to a Numpy array
-        # <YOUR CODE GOES HERE>
+
+        id3d, slcno = slc
+        sample['image'] = torch.from_numpy(self.data[id3d]['image'][slcno, :, :][None, :])
+        sample['seg']   = torch.from_numpy(self.data[id3d]['seg'][slcno, :, :][None, :])
 
         return sample
 

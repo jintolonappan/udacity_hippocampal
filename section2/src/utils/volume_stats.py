@@ -22,10 +22,16 @@ def Dice3d(a, b):
     if a.shape != b.shape:
         raise Exception(f"Expecting inputs of the same shape, got {a.shape} and {b.shape}")
 
-    # TASK: Write implementation of Dice3D. If you completed exercises in the lessons
+    # DONE: Write implementation of Dice3D. If you completed exercises in the lessons
     # you should already have it.
-    # <YOUR CODE HERE>
-    pass
+    
+    volumes = np.sum(a>0) + np.sum(b>0)
+    intrscn = np.sum(a>0 * b>0)
+    print(f'{a.shape} & {b.shape}: Volumes = {volumes}, Intersection = {intrscn}')
+
+    dice = (2.0 * intrscn) / volumes
+
+    return dice
 
 def Jaccard3d(a, b):
     """
@@ -46,8 +52,12 @@ def Jaccard3d(a, b):
     if a.shape != b.shape:
         raise Exception(f"Expecting inputs of the same shape, got {a.shape} and {b.shape}")
 
-    # TASK: Write implementation of Jaccard similarity coefficient. Please do not use 
+    # DONE: Write implementation of Jaccard similarity coefficient. Please do not use 
     # the Dice3D function from above to do the computation ;)
-    # <YOUR CODE GOES HERE>
+    volumes = np.sum(a>0) + np.sum(b>0)
+    intrscn = np.sum(a>0 * b>0)
 
-    return #
+    jacc = intrscn / (volumes - intrscn)
+
+    return jacc
+    
