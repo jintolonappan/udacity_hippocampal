@@ -31,7 +31,6 @@ def LoadHippocampusData(root_dir, y_shape, z_shape):
 
     out = []
     for f in images:
-
         # We would benefit from mmap load method here if dataset doesn't fit into memory
         # Images are loaded here using MedPy's load method. We will ignore header 
         # since we will not use it
@@ -51,6 +50,10 @@ def LoadHippocampusData(root_dir, y_shape, z_shape):
         # DONE: med_reshape function is not complete. Go and fix it!
         image = med_reshape(image, new_shape=(image.shape[0], y_shape, z_shape))
         label = med_reshape(label, new_shape=(label.shape[0], y_shape, z_shape)).astype(int)
+
+        if image is None or label is None:
+            print(f'Skipping {f} due to error in parsing')
+            continue
 
         # DONE: Why do we need to cast label to int?
         # ANSWER: 

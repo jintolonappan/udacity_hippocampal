@@ -12,7 +12,7 @@ class UNetInferenceAgent:
     """
     Stores model and parameters and some methods to handle inferencing
     """
-    def __init__(self, parameter_file_path='', model=None, device="cpu", patch_size=64):
+    def __init__(self, parameter_file_path='', model=None, device="cuda", patch_size=64):
 
         self.model = model
         self.patch_size = patch_size
@@ -67,7 +67,7 @@ class UNetInferenceAgent:
             thisslice = volume[slcidx, :, :]
             thisslice = thisslice/np.max(thisslice)
 
-            pred = self.model(torch.from_numpy(thisslice).unsqueeze(0).unsqueeze(0).to(self.device))
+            pred = self.model(torch.from_numpy(thisslice).unsqueeze(0).unsqueeze(0).to(device=self.device, dtype=torch.float))
             mask[slcidx, :, :] = torch.argmax(np.squeeze(pred.cpu().detach()), dim=0)
 
         return mask

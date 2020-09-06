@@ -17,7 +17,7 @@ class Config:
 
     def __init__(self):
         self.name = "Basic_unet"
-        self.root_dir = r"../section1/out/TrainingSet/"
+        self.root_dir = r"C:\\Users\\jinto\\code\\machlearn\\udacity\\healthcareai\\udacity_hippocampal\\section1\\out\\TrainingSet"
         self.n_epochs = 10
         self.learning_rate = 0.0002
         self.batch_size = 8
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # Create test-train-val split
     # In a real world scenario you would probably do multiple splits for
     # multi-fold training to improve your model quality
-
+    tot  = len(data)
     keys = range(len(data))
 
     # Here, random permutation of keys array would be useful in case if we do something like
@@ -53,13 +53,21 @@ if __name__ == "__main__":
     # DONE: create three keys in the dictionary: "train", "val" and "test". In each key, store
     # the array with indices of training volumes to be used for training, validation
     # and testing respectively.
-    train_ratio = 80
-    valid_ratio = int((100 - train_ratio) / 2)
-    test_ratio = 100 - train_ratio - valid_ratio
+    train_ratio = .8
+    valid_ratio = .1
+
+    trcount = int(tot * train_ratio)
+    vlcount = int(tot * valid_ratio)
+    tscount = tot - trcount - vlcount
+
+    print(f'Total images = {tot}. Splits: train={trcount}, val={vlcount}, test={tscount}')
 
     train, val, test = torch.utils.data.random_split(
-        keys, [train_ratio, valid_ratio, test_ratio], generator=torch.Generator().manual_seed(42))
+        keys, [trcount, vlcount, tscount], generator=torch.Generator().manual_seed(42))
 
+    split['train'] = train
+    split['val'] = val
+    split['test'] = test
     # Set up and run experiment
 
     # DONE: Class UNetExperiment has missing pieces. Go to the file and fill them in

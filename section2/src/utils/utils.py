@@ -102,6 +102,9 @@ def med_reshape(image, new_shape):
     y = y if y <= new_shape[1] else new_shape[1]
     z = z if z <= new_shape[2] else new_shape[2]
 
-    reshaped_image[:x, :y, :z] = image    
+    try:
+        reshaped_image[:x, :y, :z] = image
+    except:
+        return None
 
     return reshaped_image

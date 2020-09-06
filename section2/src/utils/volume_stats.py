@@ -26,7 +26,7 @@ def Dice3d(a, b):
     # you should already have it.
     
     volumes = np.sum(a>0) + np.sum(b>0)
-    intrscn = np.sum(a>0 * b>0)
+    intrscn = np.sum((a>0) * (b>0))
     print(f'{a.shape} & {b.shape}: Volumes = {volumes}, Intersection = {intrscn}')
 
     dice = (2.0 * intrscn) / volumes
@@ -55,7 +55,7 @@ def Jaccard3d(a, b):
     # DONE: Write implementation of Jaccard similarity coefficient. Please do not use 
     # the Dice3D function from above to do the computation ;)
     volumes = np.sum(a>0) + np.sum(b>0)
-    intrscn = np.sum(a>0 * b>0)
+    intrscn = np.sum((a>0) * (b>0))
 
     jacc = intrscn / (volumes - intrscn)
 

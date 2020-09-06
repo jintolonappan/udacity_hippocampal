@@ -100,6 +100,9 @@ class UNetExperiment:
             data = batch['image']
             target = batch['seg']
 
+            data = data.to(device=self.device, dtype=torch.float)
+            target = target.to(device=self.device, dtype=torch.long)
+
             prediction = self.model(data)
 
             # We are also getting softmax'd version of prediction to output a probability map
@@ -155,6 +158,9 @@ class UNetExperiment:
                 # DONE: Write validation code that will compute loss on a validation sample
                 data = batch['image']
                 target = batch['seg']
+
+                data = data.to(device=self.device, dtype=torch.float)
+                target = target.to(device=self.device, dtype=torch.long)
 
                 prediction = self.model(data)
                 prediction_softmax = F.softmax(prediction, dim=1)
