@@ -111,8 +111,12 @@ class UNetExperiment:
 
             loss = self.loss_function(prediction, target[:, 0, :, :])
 
-            # TASK: What does each dimension of variable prediction represent?
-            # ANSWER:
+            # DONE: What does each dimension of variable prediction represent?
+            # ANSWER: 
+            # Based on the prediction.shape obtained with VS Code Debug, a sample value is torch.Size([32, 3, 64, 64])
+            # Here, the first parameter (32 in sample) is the Batch Size defined in Config
+            # Second parameter (3 in sample) shows the number of classes = anterior, posterior and bg
+            # Third and Fourth parameters defines the image size used = 64x64
 
             loss.backward()
             self.optimizer.step()

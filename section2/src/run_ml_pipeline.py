@@ -19,10 +19,10 @@ class Config:
         self.name = "Basic_unet"
         self.root_dir = r"C:\\Users\\jinto\\code\\machlearn\\udacity\\healthcareai\\udacity_hippocampal\\section1\\out\\TrainingSet"
         self.n_epochs = 10
-        self.learning_rate = 0.0002
-        self.batch_size = 8
+        self.learning_rate = 0.001
+        self.batch_size = 32
         self.patch_size = 64
-        self.test_results_dir = "./out/"
+        self.test_results_dir = "../out/"
 
 
 if __name__ == "__main__":
