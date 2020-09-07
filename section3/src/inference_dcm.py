@@ -89,8 +89,9 @@ def create_report(inference, header, orig_vol, pred_vol):
     pimg = Image.new("RGB", (1000, 1000))
     draw = ImageDraw.Draw(pimg)
 
-    header_font = ImageFont.truetype("assets/Roboto-Regular.ttf", size=40)
-    main_font = ImageFont.truetype("assets/Roboto-Regular.ttf", size=20)
+    fontpath = '/home/workspace/udacity_hippocampal/section3/src/assets/Roboto-Regular.ttf'
+    header_font = ImageFont.truetype(fontpath, size=40)
+    main_font = ImageFont.truetype(fontpath, size=20)
 
     slice_nums = [orig_vol.shape[2]//3, orig_vol.shape[2]//2, orig_vol.shape[2]*3//4] # is there a better choice?
 
@@ -100,15 +101,19 @@ def create_report(inference, header, orig_vol, pred_vol):
     # efforts that will be visible to the world. The usefulness of your computations will largely
     # depend on how you present them.
 
+    # for elm in header:
+    #     print(elm)
+
     # SAMPLE CODE BELOW: UNCOMMENT AND CUSTOMIZE
     draw.text((10, 0), "HippoVolume.AI", (255, 255, 255), font=header_font)
     draw.multiline_text((10, 90),
-                        f"Patient ID: {header.PatientID}\n",
-                        f"Patient Age: {header.PatientAge}\n",
-                        f"Patient Gender: {header.PatientGender}\n",
-                        f"Modality: {header.Modality}\n",
-                        f"View Position: {header.ViewPosition}\n",
-                        f"Image Type: {header.ImageType}\n",
+                        f"Patient ID: {header.PatientID}\n"
+                        f"Study Date: {header.StudyDate}\n"
+                        f"Patient Age: {header.PatientAge}\n"
+                        f"Patient Gender: {header.PatientSex}\n"
+                        f"Modality: {header.Modality}\n"
+                        f"Patient Position: {header.PatientPosition}\n"
+                        f"Image Type: {header.ImageType}\n"
                         f"Series Description: {header.SeriesDescription}\n",
                         (255, 255, 255), font=main_font)
 
@@ -238,15 +243,17 @@ def get_series_for_inference(path):
 
     series_for_inference = []
     for thisdicom in dicoms:
-        if thisdicom.SeriesDescription == 'HippoCrop'):
+        bodypart = thisdicom.BodyPartExamined
+        if (bodypart == 'BRAIN'):
             series_for_inference.append(thisdicom)
-            
-
+        else:
+            print(f'Skipping as Body Part is {bodypart}')
+    
     # Check if there are more than one series (using set comprehension).
     if len({f.SeriesInstanceUID for f in series_for_inference}) != 1:
         print("Error: can not figure out what series to run inference on")
         return []
-
+ 
     return series_for_inference
 
 def os_command(command):
@@ -259,15 +266,19 @@ def os_command(command):
 
 if __name__ == "__main__":
     # This code expects a single command line argument with link to the directory containing
-    # routed studies
-    if len(sys.argv) != 2:
-        print("You should supply one command line argument pointing to the routing folder. Exiting.")
-        sys.exit()
+    # # routed studies
+
+    # Commenting this to make debugging in VS Code easier
+    # if len(sys.argv) != 2:
+    #     print("You should supply one command line argument pointing to the routing folder. Exiting.")
+    #     sys.exit()
+
+    study_path = '/data/TestVolumes/Study2/'
 
     # Find all subdirectories within the supplied directory. We assume that 
     # one subdirectory contains a full study
-    subdirs = [os.path.join(sys.argv[1], d) for d in os.listdir(sys.argv[1]) if
-                os.path.isdir(os.path.join(sys.argv[1], d))]
+    subdirs = [os.path.join(study_path, d) for d in os.listdir(study_path) if
+                os.path.isdir(os.path.join(study_path, d))]
 
     # Get the latest directory
     study_dir = sorted(subdirs, key=lambda dir: os.stat(dir).st_mtime, reverse=True)[0]
@@ -280,9 +291,13 @@ if __name__ == "__main__":
 
     print("HippoVolume.AI: Running inference...")
     # DONE: Use the UNetInferenceAgent class and model parameter file from the previous section
+    modelpath = '/home/workspace/udacity_hippocampal/section2/out/model.pth'
+    if not os.path.exists(modelpath):
+        raise FileNotFoundError
+
     inference_agent = UNetInferenceAgent(
         device="cpu",
-        parameter_file_path=r"../../section2/out/model.pth")
+        parameter_file_path=modelpath)
 
     # Run inference
     # DONE: single_volume_inference_unpadded takes a volume of arbitrary size 
@@ -294,7 +309,7 @@ if __name__ == "__main__":
 
     # Create and save the report
     print("Creating and pushing report...")
-    report_save_path = r"../out/"
+    report_save_path = r"/home/workspace/udacity_hippocampal/section3/out/report.dcm"
     # DONE: create_report is not complete. Go and complete it. 
     # STAND OUT SUGGESTION: save_report_as_dcm has some suggestions if you want to expand your
     # knowledge of DICOM format
@@ -304,7 +319,7 @@ if __name__ == "__main__":
     # Send report to our storage archive
     # DONE: Write a command line string that will issue a DICOM C-STORE request to send our report
     # to our Orthanc server (that runs on port 4242 of the local machine), using storescu tool
-    os_command(f"storescu localhost 4242 -v -aec HIPPOAI +r +sd {report_save_path}sec3_report.dcm")
+    os_command(f"storescu localhost 4242 -v -aec HIPPOAI +r +sd {report_save_path}")
 
     # This line will remove the study dir if run as root user
     # Sleep to let our StoreSCP server process the report (remember - in our setup

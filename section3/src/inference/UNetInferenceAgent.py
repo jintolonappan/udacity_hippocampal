@@ -40,6 +40,7 @@ class UNetInferenceAgent:
         
         # raise NotImplementedError
         volume = med_reshape(volume, (volume.shape[0], 64, 64))
+        volume = self.single_volume_inference(volume)
         return volume
 
     def single_volume_inference(self, volume):
