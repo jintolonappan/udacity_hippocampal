@@ -17,7 +17,7 @@ class Config:
 
     def __init__(self):
         self.name = "Basic_unet"
-        self.root_dir = r"C:\\Users\\jinto\\code\\machlearn\\udacity\\healthcareai\\udacity_hippocampal\\section1\\out\\TrainingSet"
+        self.root_dir = r"../../section1/out/TrainingSet/"
         self.n_epochs = 10
         self.learning_rate = 0.001
         self.batch_size = 32
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     print(f'Total images = {tot}. Splits: train={trcount}, val={vlcount}, test={tscount}')
 
     train, val, test = torch.utils.data.random_split(
-        keys, [trcount, vlcount, tscount], generator=torch.Generator().manual_seed(42))
+        keys, [trcount, vlcount, tscount])
 
     split['train'] = train
     split['val'] = val
